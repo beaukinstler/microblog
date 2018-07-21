@@ -1,8 +1,18 @@
 <html>
     <head>
-        <title>{{ title }} - Microblog</title>
+        {% if title %}
+        <title>{{ title }} - Beaublog</title>
+        {% else %}
+        <title>Welcome to Beaublog</title>
+        {% endif %}
     </head>
     <body>
         <h1>Hello, {{ user.username }}!</h1>
+        <div>There are {{ posts|length }} posts!!</div>
+        {% for post in posts %}
+        <div class='div_blog_posts'>
+            <p>{{ post.author.username }} says: <b> {{ post.body }} </b></p>
+        </div>
+        {% endfor %}
     </body>
 </html>
