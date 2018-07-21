@@ -8,3 +8,4 @@ venv/
 .secrets
 secrets.*
 secrets/
+node_modules/
