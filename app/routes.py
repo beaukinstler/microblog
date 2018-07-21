@@ -1,19 +1,11 @@
+from flask import render_template_string, render_template
 from app import app
 
 @app.route('/')
 @app.route('/index')
 def index():
     user = {'username': 'Beau'}
-    return '''
-<html>
-    <head>
-        <title>Home Page</title>
-        
-    </head>
-    <body>
-        <h1>
-            Hello, ''' + user['username'] + '''!
-        </h1>
-    </body>
-</html>
-'''
+    result = ''
+    with open('app/static/test.html','r') as htmlfile:
+        result = str(htmlfile.read())
+    return render_template_string(result,user=user,title='Home')
