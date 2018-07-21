@@ -10,6 +10,6 @@ SUPER_SECRET_KEY_OLD = (
 
 
 if __name__ == '__main__':
-    app.secret_key = SUPER_SECRET_KEY
+    app.secret_key = app.config['SUPER_SECRET_KEY']
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
