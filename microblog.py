@@ -2,7 +2,7 @@ from app import app
 import json
 
 
-SUPER_SECRET_KEY = (
+SUPER_SECRET_KEY_OLD = (
         json.loads(
             open('secrets/secrets.json', 'r')
             .read())['super_secret_key']
