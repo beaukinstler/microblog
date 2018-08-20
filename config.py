@@ -18,4 +18,9 @@ class Config(object):
     # Database config
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
             ('sqlite:///' + os.path.join(basedir, 'app.db'))
+    
+    """
+    Do not use the TRACK MODIFICATIONS to send a signal to the app
+    when a database change is about to be made
+    """
     SQLALCHEMY_TRACK_MODIFICATIONS = False
