@@ -5,6 +5,9 @@ from app.forms import LoginForm
 @app.route('/')
 @app.route('/index')
 def index():
+    """ 
+    Test data for initial testing phase
+    """
     user = {'username': 'Beau'}
     posts = [
         {
