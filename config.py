@@ -1,6 +1,9 @@
 import os
 import json
 
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+
 class Config(object):
     json_key = ''
     with open('secrets/secrets.json', 'r') as json_file:
@@ -11,3 +14,8 @@ class Config(object):
     # just keeping both as an option, so that both can be used, but 
     # it will be the same key. 
     SECRET_KEY = SUPER_SECRET_KEY
+    
+    # Database config
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+            ('sqlite:///' + os.path.join(basedir, 'app.db'))
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
