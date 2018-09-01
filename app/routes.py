@@ -1,14 +1,20 @@
 from flask import render_template_string, render_template, request, flash, redirect, url_for
 from app import app
 from app.forms import LoginForm
+from flask_login import current_user, login_user, logout_user, login_required
+from werkzeug.urls import url_parse
+from app.models import User
+
+
 
 @app.route('/')
 @app.route('/index')
+@login_required
 def index():
     """ 
     Test data for initial testing phase
     """
-    user = {'username': 'Beau'}
+    # user = {'username': 'Beau'}
     posts = [
         {
             'author': {'username':'Beau'},
@@ -19,13 +25,25 @@ def index():
             'body': 'It\'s a real treat'
         }
     ]
-    return render_template('index.html',user=user,title='Home',posts=posts)
+    return render_template('index.html',title='Home',posts=posts)
 
 @app.route('/login',methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        flash("Login requested from {}, and remember_me  = {}".format(
-                form.username.data, form.remember_me.data))
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash("Umm, that's not correct")
+            return redirect(url_for('login'))
+        
+        login_user(user, remember=form.remember_me.data)
         return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
