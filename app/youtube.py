@@ -18,7 +18,7 @@ def my_hook(d):
         print('Done downloading, now converting ...')
 
 
-def getmp3(link='https://www.youtube.com/watch?v=gn2933vMylY', quality='192'):
+def getmp3(link='https://youtu.be/TBNKyuYucR0?t=243', quality='192'):
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -28,6 +28,8 @@ def getmp3(link='https://www.youtube.com/watch?v=gn2933vMylY', quality='192'):
         }],
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
+        'download_archive': './dl_files/.archive',
+        'outtmpl': './dl_files/%(id)s_%(title)s_.%(ext)s'
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([link])
