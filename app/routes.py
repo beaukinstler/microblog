@@ -55,7 +55,11 @@ def mp3maker():
     """
     
     if request.method == 'POST':
-        getmp3()
+        link = request.form['link']
+        print(link)
+        result = getmp3(link)
+        flash('You converted "{}" into "{}_{}.mp3"'.format(
+                result['video_title'], result['video_id'], result['video_title']))
         return redirect(url_for('mp3maker'))  # TODO: this should really go to a page to download the file, or I should find a way to just download the file
         
     else:
