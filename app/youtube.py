@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 import youtube_dl
 import pdb
+from app import app
+
+MP3DIR = app.config['MP3DIR']
 
 
 class MyLogger(object):
@@ -15,11 +18,13 @@ class MyLogger(object):
 
 
 def my_hook(d):
+    print(d)
     if d['status'] == 'finished':
         print('Done downloading, now converting ...')
 
 
-def getmp3(link='https://youtu.be/TBNKyuYucR0?t=243', quality='192'):
+def getmp3(link, quality='192'):
+    print("DEBUG: {}".format(MP3DIR))
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -29,9 +34,10 @@ def getmp3(link='https://youtu.be/TBNKyuYucR0?t=243', quality='192'):
         }],
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
-        'download_archive': './dl_files/.archive',
-        'outtmpl': './dl_files/%(id)s_%(title)s_.%(ext)s'
+        'download_archive': './app/{}/.archive'.format(MP3DIR),
+        'outtmpl': './app/{}/%(id)s.%(ext)s'.format(MP3DIR)
     }
+    print(ydl_opts)
     result = {}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([link])
@@ -39,3 +45,4 @@ def getmp3(link='https://youtu.be/TBNKyuYucR0?t=243', quality='192'):
         result['video_id'] = info_dict.get("id", None)
         result['video_title'] = info_dict.get('title', None)
     return result
+

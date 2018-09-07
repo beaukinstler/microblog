@@ -1,4 +1,5 @@
-from flask import render_template_string, render_template, request, flash, redirect, url_for
+from flask import render_template_string, render_template, request, flash, redirect
+from flask import current_app, url_for, send_from_directory
 from app import app
 from app.forms import LoginForm
 from flask_login import current_user, login_user, logout_user, login_required
@@ -8,7 +9,9 @@ import random, string, json
 from flask import make_response, session as login_session
 from app.youtube import getmp3
 import pdb
+import os
 
+MP3DIR = app.config['MP3DIR']
 
 
 @app.route('/')
@@ -60,13 +63,29 @@ def mp3maker():
         result = getmp3(link)
         flash('You converted "{}" into "{}_{}.mp3"'.format(
                 result['video_title'], result['video_id'], result['video_title']))
-        return redirect(url_for('mp3maker'))  # TODO: this should really go to a page to download the file, or I should find a way to just download the file
+        return redirect(url_for('download', vid_id=result['video_id']))  # TODO: this should really go to a page to download the file, or I should find a way to just download the file
         
     else:
         state = get_state_token()
         login_session['state'] = state
         return render_template('getmp3.html', title='Mp3 maker', STATE=state )
 
+
+@app.route('/mp3s/<path:vid_id>', methods=['GET', 'POST'])
+def download(vid_id):
+    files_arr = os.listdir("./app/" + MP3DIR)
+    # pdb.set_trace()
+    for file in files_arr:
+        if vid_id in file:
+            filename = str(file)
+            break
+        else:
+            flash('Could not file video with ID "{}"'.format(vid_id))
+            return redirect(url_for('mp3maker'))
+
+    uploads = os.path.join(current_app.root_path, MP3DIR)
+    print("DEBUG: Files uploads is - {} and filename is - {}".format(uploads, filename))
+    return send_from_directory(uploads, filename, as_attachment=True)
 
 @app.route('/logout')
 @login_required
