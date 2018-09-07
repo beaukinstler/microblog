@@ -9,4 +9,4 @@ venv/
 secrets.*
 secrets/
 node_modules/
-dl_files/*
+app/static/mp3s/*

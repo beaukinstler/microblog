@@ -24,3 +24,5 @@ class Config(object):
     when a database change is about to be made
     """
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    MP3DIR = 'static/mp3s'
