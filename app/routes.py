@@ -61,9 +61,12 @@ def mp3maker():
         link = request.form['link']
         print(link)
         result = getmp3(link)
+        if result['error'] != '':
+            flash(result['error'])
+            return redirect(url_for('mp3maker'))
         flash('You converted "{}" into "{}_{}.mp3"'.format(
                 result['video_title'], result['video_id'], result['video_title']))
-        return redirect(url_for('download', vid_id=result['video_id']))  # TODO: this should really go to a page to download the file, or I should find a way to just download the file
+        return redirect(url_for('download', vid_id=result['video_id']))
         
     else:
         state = get_state_token()

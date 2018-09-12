@@ -26,3 +26,4 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     MP3DIR = 'static/mp3s'
+    KEEPMP3S = False

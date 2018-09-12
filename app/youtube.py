@@ -39,10 +39,14 @@ def getmp3(link, quality='192'):
     }
     print(ydl_opts)
     result = {}
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([link])
-        info_dict = ydl.extract_info(link, download=False)
-        result['video_id'] = info_dict.get("id", None)
-        result['video_title'] = info_dict.get('title', None)
+    try:
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([link])
+            info_dict = ydl.extract_info(link, download=False)
+            result['video_id'] = info_dict.get("id", None)
+            result['video_title'] = info_dict.get('title', None)
+            result['error'] = ''
+    except:
+        result['error'] = "couldn't get video.  Check the URL is a video, then try again"
     return result
 
