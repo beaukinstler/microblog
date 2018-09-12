@@ -34,9 +34,11 @@ def getmp3(link, quality='192'):
         }],
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
-        'download_archive': './app/{}/.archive'.format(MP3DIR),
+        # 'download_archive': './app/{}/.archive'.format(MP3DIR),
         'outtmpl': './app/{}/%(id)s.%(ext)s'.format(MP3DIR)
     }
+    if app.config['KEEPMP3S']:
+        ydl_opts['download_archive'] = './app/{}/.archive'.format(MP3DIR)
     print(ydl_opts)
     result = {}
     try:

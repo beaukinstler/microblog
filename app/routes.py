@@ -1,4 +1,4 @@
-from flask import render_template_string, render_template, request, flash, redirect
+from flask import render_template_string, render_template, request, flash, redirect, after_this_request
 from flask import current_app, url_for, send_from_directory
 from app import app
 from app.forms import LoginForm
@@ -18,7 +18,7 @@ MP3DIR = app.config['MP3DIR']
 @app.route('/index')
 @login_required
 def index():
-    """ 
+    """
     Test data for initial testing phase
     """
     # user = {'username': 'Beau'}
@@ -44,7 +44,7 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash("Umm, that's not correct")
             return redirect(url_for('login'))
-        
+
         login_user(user, remember=form.remember_me.data)
         return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
@@ -53,13 +53,12 @@ def login():
 @login_required
 def mp3maker():
     """
-    Purpose:    A page to post a link, and call YoutubeDL to convert 
+    Purpose:    A page to post a link, and call YoutubeDL to convert
                 a video into an mp3.
     """
-    
+
     if request.method == 'POST':
         link = request.form['link']
-        print(link)
         result = getmp3(link)
         if result['error'] != '':
             flash(result['error'])
@@ -67,17 +66,30 @@ def mp3maker():
         flash('You converted "{}" into "{}_{}.mp3"'.format(
                 result['video_title'], result['video_id'], result['video_title']))
         return redirect(url_for('download', vid_id=result['video_id']))
-        
+
     else:
         state = get_state_token()
         login_session['state'] = state
+
+        # # remove any old files if not set to keep files
+        if not app.config['KEEPMP3S']:
+            uploads = os.path.join(current_app.root_path, MP3DIR)
+            files_arr = os.listdir("./app/" + MP3DIR)
+            for file in files_arr:
+                filename = uploads + "/" + file
+                try:
+
+                    print("Purging {}".format(filename))
+                    os.remove(filename)
+                except Exception as e:
+                    print(e)
+
         return render_template('getmp3.html', title='Mp3 maker', STATE=state )
 
 
 @app.route('/mp3s/<path:vid_id>', methods=['GET', 'POST'])
 def download(vid_id):
     files_arr = os.listdir("./app/" + MP3DIR)
-    # pdb.set_trace()
     for file in files_arr:
         if vid_id in file:
             filename = str(file)
