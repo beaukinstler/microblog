@@ -80,6 +80,6 @@ class Config(object):
     MAIL_SERVER = mail_server or 'localhost'
     MAIL_PORT = int(mail_port or 25)
     MAIL_USE_TLS = mail_uses_tls is not None
-    MAIL_USERNAME = mail_username or 'testuser'
-    MAIL_PASSWORD = mail_password or "TestABC321"
+    MAIL_USERNAME = mail_username
+    MAIL_PASSWORD = mail_password
     ADMIN_EMAIL = admin_email
