@@ -11,7 +11,15 @@ from app import login
 def load_user(id):
     return User.query.get(int(id))
 
+"""
+Linking tables:
+These links are only that, and hold no data in this model.
 
+in flask, in order to use the migrations for these tables, we'll
+run commands such as... 
+`$ flask db migrate -m 'followers'`
+`$ flask db upgrade `
+"""
 followers = db.Table(
     'followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
