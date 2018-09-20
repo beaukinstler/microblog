@@ -10,3 +10,4 @@ secrets.*
 secrets/
 node_modules/
 logs/
+logs/
