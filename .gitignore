@@ -10,3 +10,4 @@ secrets.*
 secrets/
 node_modules/
 app/static/mp3s/*
+logs/
