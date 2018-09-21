@@ -57,7 +57,7 @@ class UserModelCase(unittest.TestCase):
         db.session.add(u2)
         db.session.commit()
         self.assertEqual(u1.favorited.all(), [])
-        self.assertEqual(u1.fans.all(), [])
+        self.assertEqual(u2.fans.all(), [])
 
         u1.add_favorite(u2)
         db.session.commit()
@@ -67,7 +67,7 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(u2.fans.count(), 1)
         self.assertEqual(u2.fans.first().username, 'john')
 
-        u1.unfollow(u2)
+        u1.remove_favorite(u2)
         db.session.commit()
         self.assertFalse(u1.is_favorite(u2))
         self.assertEqual(u1.favorited.count(), 0)
