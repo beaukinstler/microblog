@@ -111,6 +111,44 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(f3, [p3, p4])
         self.assertEqual(f4, [p4])
 
+    def test_favorites_posts(self):
+        # create four users
+        u1 = User(username='john', email='john@example.com')
+        u2 = User(username='susan', email='susan@example.com')
+        u3 = User(username='mary', email='mary@example.com')
+        u4 = User(username='david', email='david@example.com')
+        db.session.add_all([u1, u2, u3, u4])
+
+        # create four posts
+        now = datetime.utcnow()
+        p1 = Post(body="post from john", author=u1,
+                  timestamp=now + timedelta(seconds=1))
+        p2 = Post(body="post from susan", author=u2,
+                  timestamp=now + timedelta(seconds=4))
+        p3 = Post(body="post from mary", author=u3,
+                  timestamp=now + timedelta(seconds=3))
+        p4 = Post(body="post from david", author=u4,
+                  timestamp=now + timedelta(seconds=2))
+        db.session.add_all([p1, p2, p3, p4])
+        db.session.commit()
+
+        # setup the favorites of each user
+        u1.add_favorite(u2)  # john add_favorites susan
+        u1.add_favorite(u4)  # john add_favorites david
+        u2.add_favorite(u3)  # susan add_favorites mary
+        u3.add_favorite(u4)  # mary follows david
+        db.session.commit()
+
+        # check the posts of each user's favorite users
+        f1 = u1.favorite_posts().all()
+        f2 = u2.favorite_posts().all()
+        f3 = u3.favorite_posts().all()
+        f4 = u4.favorite_posts().all()
+        self.assertEqual(f1, [p2, p4])
+        self.assertEqual(f2, [p3])
+        self.assertEqual(f3, [p4])
+        self.assertEqual(f4, [])
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
