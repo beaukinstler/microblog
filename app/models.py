@@ -47,7 +47,7 @@ class User(UserMixin, db.Model):
             'User', secondary=favorites_tbl,
             primaryjoin=(favorites_tbl.c.fan_id == id),
             secondaryjoin=(favorites_tbl.c.favorite_id == id),
-            backref=db.backref('favorite_of', lazy='dynamic'), lazy='dynamic'
+            backref=db.backref('fans', lazy='dynamic'), lazy='dynamic'
     )
     followed = db.relationship(
             'User', secondary=followers,
