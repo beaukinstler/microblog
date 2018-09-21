@@ -100,7 +100,7 @@ class User(UserMixin, db.Model):
             favorites_tbl.c.favorite_id == user.id).count() > 0
 
     def followed_posts(self):
-        followed_posts =  Post.query.join(
+        followed_posts = Post.query.join(
             followers,
             (followers.c.followed_id == Post.user_id)).\
             filter(followers.c.follower_id == self.id)
