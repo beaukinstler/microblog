@@ -11,12 +11,13 @@ from app import login
 def load_user(id):
     return User.query.get(int(id))
 
+
 """
 Linking tables:
 These links are only that, and hold no data in this model.
 
 in flask, in order to use the migrations for these tables, we'll
-run commands such as... 
+run commands such as...
 `$ flask db migrate -m 'followers'`
 `$ flask db upgrade `
 """
@@ -73,6 +74,30 @@ class User(UserMixin, db.Model):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
                 digest, size)
+
+    def follow(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
+
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.followed.remove(user)
+
+    def is_following(self, user):
+        return self.followed.filter(
+            followers.c.followed_id == user.id).count() > 0
+
+    def add_favorite(self, user):
+        if not self.is_favorite(user):
+            self.favorited.append(user)
+
+    def remove_favorite(self, user):
+        if self.is_favorite(user):
+            self.favorited.remove(user)
+
+    def is_favorite(self, user):
+        return self.favorited.filter(
+            favorites_tbl.c.favorite_id == user.id).count() > 0
 
 
 class Post(db.Model):
