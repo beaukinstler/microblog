@@ -47,7 +47,7 @@ class User(UserMixin, db.Model):
             'User', secondary=favorites_tbl,
             primaryjoin=(favorites_tbl.c.fan_id == id),
             secondaryjoin=(favorites_tbl.c.favorite_id == id),
-            backref=db.backref('favorites', lazy='dynamic'), lazy='dynamic'
+            backref=db.backref('favorite_of', lazy='dynamic'), lazy='dynamic'
     )
     followed = db.relationship(
             'User', secondary=followers,
@@ -98,6 +98,21 @@ class User(UserMixin, db.Model):
     def is_favorite(self, user):
         return self.favorited.filter(
             favorites_tbl.c.favorite_id == user.id).count() > 0
+
+    def followed_posts(self):
+        followed_posts =  Post.query.join(
+            followers,
+            (followers.c.followed_id == Post.user_id)).\
+            filter(followers.c.follower_id == self.id)
+        own_posts = Post.query.filter_by(user_id=self.id)
+        return followed_posts.union(own_posts).order_by(Post.timestamp.desc())
+
+    def favorite_posts(self):
+        fav_posts = Post.query.join(
+            favorites_tbl,
+            (favorites_tbl.c.favorite_id == Post.user_id)).\
+            filter(favorites_tbl.c.fan_id == self.id)
+        return fav_posts.order_by(Post.timestamp.desc())
 
 
 class Post(db.Model):
