@@ -85,4 +85,4 @@ class Config(object):
     ADMIN_EMAIL = admin_email
 
     #  Pagination
-    POSTS_PER_PAGE = 3
+    POSTS_PER_PAGE = 25
