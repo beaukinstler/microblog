@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    
+    <table>
+        {% for user in users %}
+        <tr valign="top" style="border:dashed" >
+            <td>
+                    <h4>User: {{ user.username }}</h4>
+                    {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+                    {% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div>
+                {% if user != current_user %}
+                    {% if current_user.is_following(user) %}
+                        <p><a href="{{ url_for('unfollow', username=user.username ) }}">unfollow</a></p>
+                    {% else %}
+                        <p><a href="{{ url_for('follow', username=user.username ) }}">follow</a></p>
+                    {% endif %}
+                {% endif %}
+                </div>
+                <div>
+                {% for post in user.posts.limit(3) %}
+                    {% include '_post.html' %}
+                {% endfor %}
+                </div>
+                
+            </td>
+
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
