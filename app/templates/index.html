@@ -15,7 +15,7 @@
             <p>{{ form.submit() }}</p>
         </form>
     </div>
-    {% for post in current_user.followed_posts() %}
-    <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+    {% for post in posts %}
+    <div><p><span><img src="{{ post.author.avatar(128) }}"></span>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
     {% endfor %}
 {% endblock %}

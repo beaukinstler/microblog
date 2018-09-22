@@ -19,6 +19,8 @@ def before_request():
 @login_required
 def index():
     form = PostForm()
+    posts = current_user.followed_posts().all()
+
     if form.validate_on_submit():
         post = Post(body=form.post_body.data, author=current_user)
         db.session.add(post)
@@ -26,7 +28,8 @@ def index():
         flash('Your post is now live')
         return redirect(url_for('index'))
     else:
-        return render_template('index.html', title='Home', form=form)
+        return render_template('index.html', title='Home',
+                               form=form, posts=posts)
 
 
 @app.route('/login', methods=['GET', 'POST'])
