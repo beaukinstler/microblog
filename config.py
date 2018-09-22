@@ -83,3 +83,6 @@ class Config(object):
     MAIL_USERNAME = mail_username
     MAIL_PASSWORD = mail_password
     ADMIN_EMAIL = admin_email
+
+    #  Pagination
+    POSTS_PER_PAGE = 3
