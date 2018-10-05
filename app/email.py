@@ -25,4 +25,3 @@ def send_password_reset_email(user):
 def send_async_email(app, msg):
     with app.app_context():
         mail.send(msg)
-
