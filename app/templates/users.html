@@ -16,7 +16,8 @@
                         {% endif %}
                     {% endif %}
                     {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-                    {% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}
+                    {% if user.last_seen %}<p>Last seen on: {{ moment(user.last_seen).format('dddd') }}
+                        , {{ moment(user.last_seen).format('L') }}</p>{% endif %}
             </td>
         </tr>
         <tr>
