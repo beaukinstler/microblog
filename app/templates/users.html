@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
-{% block content %}
+{% block app_content %}
     
-    <table>
+    <table class="table border border-dark">
         {% for user in users %}
-        <tr valign="top" style="border:dashed" >
+        <tr valign="top"  >
             <td>
                     <h4>User: {{ user.username }}</h4>
                     {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}

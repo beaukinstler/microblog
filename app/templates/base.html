@@ -1,33 +1,44 @@
-<html>
-    <head>
-        {% if title %}
-        <title>{{ title }} - Beaublog</title>
-        {% else %}
-        <title>Welcome to Beaublog</title>
-        {% endif %}
-    </head>
-    <body>
-            <div>
-            Beaublog: 
-            <a href="{{ url_for('index')}}">Home</a>
-            {% if current_user.is_anonymous %}
-            <a href="{{ url_for('login')}}">Login</a>
-            {% else %}
-            <a href="{{ url_for('user', username=current_user.username) }}">{{current_user.username}}'s Profile</a>
-            <a href="{{ url_for('users') }}">Users</a>
-            <a href="{{ url_for('explore') }}">Explore</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-            {% endif %}
+{% extends 'bootstrap/base.html' %}
+
+{% block title %}
+    {% if title %}
+    {{ title }} - b-kin-blog
+    {% else %}Welcome to b-kin-blog
+    {% endif %}
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{{ url_for('index')}}">b-kin-blog</a>
             </div>
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <ul>
-                    {% for message in messages %}
-                    <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="{{ url_for('index')}}">Home</a></li>
+                {% if current_user.is_anonymous %}
+                <li><a href="{{ url_for('login')}}">Login</a></li>
+                {% else %}
+                <li><a href="{{ url_for('user', username=current_user.username) }}">{{current_user.username}}'s Profile</a></li>
+                <li><a href="{{ url_for('users') }}">Users</a></li>
+                <li><a href="{{ url_for('explore') }}">Explore</a></li>
+                <li><a href="{{ url_for('logout') }}">Logout</a></li>
                 {% endif %}
-            {% endwith %}
-            {% block content %}{% endblock %}
-        </body>
-</html>
+            </ul>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {# application content needs to be provided in the app_content block #}
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
