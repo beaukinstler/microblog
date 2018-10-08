@@ -2,11 +2,19 @@
 
 {% block app_content %}
     
-    <table class="table border border-dark">
+
         {% for user in users %}
+        <table class="table border border-dark">
         <tr valign="top"  >
             <td>
                     <h4>User: {{ user.username }}</h4>
+                    {% if user != current_user %}
+                        {% if current_user.is_following(user) %}
+                            <p><a href="{{ url_for('unfollow', username=user.username ) }}">unfollow</a></p>
+                        {% else %}
+                            <p><a href="{{ url_for('follow', username=user.username ) }}">follow</a></p>
+                        {% endif %}
+                    {% endif %}
                     {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
                     {% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}
             </td>
@@ -14,13 +22,7 @@
         <tr>
             <td>
                 <div>
-                {% if user != current_user %}
-                    {% if current_user.is_following(user) %}
-                        <p><a href="{{ url_for('unfollow', username=user.username ) }}">unfollow</a></p>
-                    {% else %}
-                        <p><a href="{{ url_for('follow', username=user.username ) }}">follow</a></p>
-                    {% endif %}
-                {% endif %}
+
                 </div>
                 <div>
                 {% for post in user.posts.limit(3) %}
@@ -31,6 +33,7 @@
             </td>
 
         </tr>
-        {% endfor %}
     </table>
+        {% endfor %}
+
 {% endblock %}
