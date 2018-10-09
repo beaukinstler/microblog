@@ -11,3 +11,4 @@ secrets/
 node_modules/
 logs/
 logs/
+app/translations/es/LC_MESSAGES/messages.mo
