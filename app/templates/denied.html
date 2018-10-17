@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>{{ title }}</h1>
+    <div class="row">
+        <div class="col-md-4">
+                <a href="javascript:getPolls(
+                    '#pollingPlaces',
+                    '#optPersonStreet',
+                    '#optPersonCity',
+                    '#optPersonState',
+                    '#optPersonZip',
+                    '#electionId');">Look up polling place based on personal address</a>
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+    <h2>Polling Place Lookup</h2>
+    <span id="pollingPlaces">
+        
+    </span>
+    <h2>Denials Logged:</h2>
+    {% for denial in denials %}
+    <div class="row">{{ denial }} </div>
+    {% endfor %}
+    {% include '_paginate_denials.html' %}
+
+    <script>
+        function getPolls(destElem, street, city, state, zip) {
+            $(destElem).html('<img style="width:50px;height:60px;" src="{{ url_for('static', filename='loading.gif') }}">');
+            $.post('/polling_place', {
+                street: $(street).val(),
+                city: $(city).val(),
+                state: $(state).val(),
+                zip: $(zip).val(),
+                electionId: $(electionId).val()
+            }).done(function(response){
+                var name = response[0].locationName;
+                var street = response[0].line1;
+                $(destElem).html(name +"<br>" + street);
+                $('#pollName').val(name);
+            }).fail(function() {
+                $(destElem).text("Server error... Please manually look up polling place details")
+            });
+        }
+    </script>
+{% endblock %}
