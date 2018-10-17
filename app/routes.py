@@ -1,14 +1,16 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm,\
-        ResetPasswordRequestForm, ResetPasswordForm
+        ResetPasswordRequestForm, ResetPasswordForm, DenialForm
 from flask_login import current_user, login_user, logout_user, login_required
 # from werkzeug.urls import url_parse
-from app.models import User, Post
+from app.models import User, Post, Denial
 from datetime import datetime
 from app.email import send_password_reset_email
 from flask import g
 from flask_babel import get_locale
+import app.civic as civic
+import pdb
 
 
 @app.before_request
@@ -214,3 +216,62 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('login'))
     return render_template('reset_password.html', form=form)
+
+
+@app.route('/denied', methods=['GET', 'POST'])
+def denied():
+    """
+    Gather and show data for denied logs
+    """
+    form = DenialForm()
+    if form.validate_on_submit():
+        denial = Denial(
+                optPersonName=form.optPersonName.data,
+                optEmail=form.optEmail.data,
+                optPersonStreet=form.optPersonStreet.data,
+                optPersonCity=form.optPersonCity.data,
+                optPersonState=form.optPersonState.data,
+                optPersonZip=form.optPersonZip.data,
+                pollZip=form.pollZip.data,
+                pollStreet=form.pollStreet.data,
+                pollCity=form.pollCity.data,
+                pollState=form.pollState.data,
+                pollName=form.pollName.data,
+                poc=form.poc.data,
+                registration_type=form.registration_type.data)
+        
+        db.session.add(denial)
+        db.session.commit()
+        flash("Thanks for logging your denail...")
+        return redirect(url_for('denied'))
+    page = request.args.get("page", 1, type=int)
+    denials = Denial.query.order_by(Denial.timestamp.desc()).\
+        paginate(page, app.config['POSTS_PER_PAGE'], False)
+    #  Pagination links
+    next_url = url_for('denied', page=denials.next_num) \
+        if denials.has_next else None
+    prev_url = url_for('denied', page=denials.prev_num) \
+        if denials.has_prev else None
+    return render_template('denied.html', title="Log your denial",
+                           form=form, denials=denials.items,
+                           next_url=next_url, prev_url=prev_url)
+
+
+@app.route('/polling_place', methods=['POST'])
+def get_polling_place():
+    """
+    Try to find the polling place based on the personal address
+    """
+    optPersonStreet = request.form['street']
+    optPersonCity = request.form['city']
+    optPersonState = request.form['state']
+    optPersonZip = request.form['zip']
+    address = "{},{},{} {},".format(
+            optPersonStreet,
+            optPersonCity,
+            optPersonState,
+            optPersonZip
+        )
+    electionId = civic.get_elections()[0]['id'] if request.form['electionId'] == "" \
+        else request.form['electionId']
+    return jsonify(civic.get_voter_info(address, electionId))

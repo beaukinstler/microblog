@@ -7,6 +7,7 @@ from hashlib import md5
 from app import login, app
 from jwt import encode, decode
 from time import time
+import app.civic as civic
 
 
 @login.user_loader
@@ -139,3 +140,41 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+
+class Denial(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    optPersonName = db.Column(db.String(140))
+    optPersonStreet = db.Column(db.String(140))
+    optPersonCity = db.Column(db.String(140))
+    optPersonState = db.Column(db.String(2))
+    optPersonZip = db.Column(db.String(10))
+    optEmail = db.Column(db.String(120))
+
+    pollZip = db.Column(db.String(10))
+    pollStreet = db.Column(db.String(140))
+    pollCity = db.Column(db.String(140))
+    pollState = db.Column(db.String(2))
+    pollName = db.Column(db.String(50))
+
+    poc = db.Column(db.Boolean())
+    registration_type = db.Column(db.String(1))
+    electionId = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def set_electionId(self, electionId):
+        self.electionId = electionId
+
+    def get_polling_place(self):
+        if not self.elelectionId:
+            self.electionId = civic.get_elections()[0]
+        address = "{},{},{} {},".format(
+                self.optPersonStreet,
+                self.optPersonCity,
+                self.optPersonState,
+                self.optPersonZip
+        )
+        return civic.get_voter_info(address, self.electionId)
+
+    def __repr__(self):
+        return '<Denial {}, {}>'.format((self.pollStreet + " - " +self.pollZip), self.timestamp)

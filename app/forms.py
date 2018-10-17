@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField,\
         TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError,\
-        Length
+        Length, Regexp
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
@@ -66,3 +66,29 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Request Password Reset')
+
+
+class DenialForm(FlaskForm):
+    electionId = StringField('electionId')
+    optPersonName = StringField('Name')
+    optEmail = StringField('Email', validators=[Email()])
+    optPersonStreet = StringField('Street')
+    optPersonCity = StringField('City')
+    optPersonState = StringField('State')
+    optPersonZip = StringField('Zip', validators=[Regexp("^\d{5}(?:[-\s]\d{4})?$", message="Must be a U.S. zip code")])
+    pollZip = StringField('Polling Place Zip', validators=[DataRequired()])
+    pollStreet = StringField('Polling Place Street', validators=[DataRequired()])
+    pollCity = StringField('Polling Place City', validators=[DataRequired()])
+    pollState = StringField('Polling Place State', validators=[DataRequired()])
+    pollName = StringField('Polling Place Name')
+    poc = BooleanField('You identify as a person of color')
+    registration_type = StringField('What party are you registered for?')
+    submit = SubmitField('Register')
+
+
+class PollingPlaceFinder(FlaskForm):
+    optPersonStreet = StringField('Street')
+    optPersonCity = StringField('City')
+    optPersonState = StringField('State')
+    optPersonZip = StringField('Zip', validators=[Regexp("^\d{5}(?:[-\s]\d{4})?$", message="Must be a U.S. zip code")])
+    submit = SubmitField('Register')

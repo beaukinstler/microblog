@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import unittest
 from app import app, db
-from app.models import User, Post
+from app.models import User, Post, Denial
 
 
 class UserModelCase(unittest.TestCase):
@@ -148,6 +148,41 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(f2, [p3])
         self.assertEqual(f3, [p4])
         self.assertEqual(f4, [])
+
+
+class DenialModelCase(unittest.TestCase):
+    def setUp(self):
+        # change the SQL db to an in-memory version
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+        db.create_all()  # quick create the tables
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_denial_logged(self):
+        d = Denial(optPersonName = "Test",
+                    optPersonStreet = "1503 Almond Ave",
+                    optPersonCity = "Saint Paul",
+                    optPersonState = "MN",
+                    optPersonZip = "11215",
+                    optEmail = "Test@example.com",
+
+                    pollZip = "Test",
+                    pollStreet = "Test",
+                    pollCity = "Test",
+                    pollState = "Test",
+                    pollName = "Test",
+
+                    poc = True,
+                    registration_type = "O",
+                    elelectionId = 6000)
+
+        polling_place = d.get_polling_place()
+        db.session.add(d)
+        db.session.commit()
+
+    def test_polling_place(self):
 
 
 if __name__ == '__main__':

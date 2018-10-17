@@ -56,6 +56,11 @@ class Config(object):
         except Exception as e:
             admin_email = os.environ.get('ADMIN_EMAIL')
 
+        try:
+            GOOGLE_CIVIC_KEY = json_blob['google_civic_key']
+        except Exception as e:
+            GOOGLE_CIVIC_KEY = ""
+
     # the other keys default to the json file.  This secret goes back to
     # to defering to the OS Environment instead.  Add similar logic to
     # do the same for other keys
