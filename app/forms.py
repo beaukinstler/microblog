@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField,\
-        TextAreaField
+        TextAreaField, RadioField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError,\
         Length, Regexp
 from flask_babel import _, lazy_gettext as _l
@@ -82,8 +82,16 @@ class DenialForm(FlaskForm):
     pollState = StringField('Polling Place State', validators=[DataRequired()])
     pollName = StringField('Polling Place Name')
     poc = BooleanField('You identify as a person of color')
-    registration_type = StringField('What party are you registered for?')
-    submit = SubmitField('Register')
+    registration_type = SelectField('What party are you registered for?',
+            choices=[
+                ('N','None'),
+                ('D','Democrat'),
+                ('R','Republican'),
+                ('I','Independent'),
+                ('G','Green'),
+                ('K','Don\'t know'),
+                ('O','Other')])
+    submit = SubmitField('Submit your log')
 
 
 class PollingPlaceFinder(FlaskForm):
