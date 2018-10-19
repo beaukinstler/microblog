@@ -10,7 +10,6 @@ from app.email import send_password_reset_email
 from flask import g
 from flask_babel import get_locale
 import app.civic as civic
-import pdb
 
 
 @app.before_request
@@ -274,4 +273,6 @@ def get_polling_place():
         )
     electionId = civic.get_elections()[0]['id'] if request.form['electionId'] == "" \
         else request.form['electionId']
-    return jsonify(civic.get_voter_info(address, electionId))
+    response_data = jsonify(civic.get_polling_addresses(address, electionId))
+
+    return response_data

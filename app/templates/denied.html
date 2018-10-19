@@ -3,22 +3,26 @@
 
 {% block app_content %}
     <h1>{{ title }}</h1>
+    <h2 class="pollingPlaceDetails" hidden >Polling Place Lookup</h2>
+    <span class="pollingPlaceDetails" id="pollingPlaces" hidden></span>
     <div class="row">
         <div class="col-md-4">
-                <a href="javascript:getPolls(
-                    '#pollingPlaces',
+            <div>
+                <input id="clickMe" type="button" value="Look up polling place based on personal address" onclick="getPolls();" />
+            </div>
+                <!-- <a href="javascript:getPolls(
+                    
                     '#optPersonStreet',
                     '#optPersonCity',
                     '#optPersonState',
                     '#optPersonZip',
-                    '#electionId');">Look up polling place based on personal address</a>
+                    '#electionId');">Look up polling place based on personal address</a> -->
+                    <div id="statusIcon" ></div>
             {{ wtf.quick_form(form) }}
         </div>
     </div>
-    <h2>Polling Place Lookup</h2>
-    <span id="pollingPlaces">
-        
-    </span>
+
+
     <h2>Denials Logged:</h2>
     {% for denial in denials %}
     <div class="row">{{ denial }} </div>
@@ -26,20 +30,42 @@
     {% include '_paginate_denials.html' %}
 
     <script>
-        function getPolls(destElem, street, city, state, zip) {
+        function getPolls() {
+            var destElem = $('#pollingPlaces');
+            $('.pollingPlaceDetails').removeAttr('hidden');
             $(destElem).html('<img style="width:50px;height:60px;" src="{{ url_for('static', filename='loading.gif') }}">');
             $.post('/polling_place', {
-                street: $(street).val(),
-                city: $(city).val(),
-                state: $(state).val(),
-                zip: $(zip).val(),
-                electionId: $(electionId).val()
+                street: $('#optPersonStreet').val(),
+                city: $('#optPersonCity').val(),
+                state: $('#optPersonState').val(),
+                zip: $('#optPersonZip').val(),
+                electionId: $('#electionId').val()
             }).done(function(response){
-                var name = response[0].locationName;
-                var street = response[0].line1;
-                $(destElem).html(name +"<br>" + street);
-                $('#pollName').val(name);
+                console.log(response.error.code);
+                if (response.error.code != '400'){
+                    var name = response.pollingLocations[0].address.locationName;
+                    var street = response.pollingLocations[0].address.line1;
+                    var city = response.pollingLocations[0].address.city;
+                    var state = response.pollingLocations[0].address.state;
+                    var zip = response.pollingLocations[0].address.zip;
+
+                    $(destElem).html(name +"<br>" + street  +"<br>" + zip);
+                    $('#statusIcon').html("");
+                    $('#pollName').val(name);
+                    $('#pollStreet').val(street);
+                    $('#pollCity').val(city);
+                    $('#pollState').val(state);
+                    $('#pollZip').val(zip);
+                    $('.pollingPlaceDetails').removeAttr('hidden');
+                }
+                else {
+                    $(destElem).html(
+                        "***That address isn't available in the public records**** <br>"
+                        + "Please manually enter the polling location info as bast as you can.<br>"
+                    );
+                }
             }).fail(function() {
+                $('.pollingPlaceDetails').removeAttr('hidden');
                 $(destElem).text("Server error... Please manually look up polling place details")
             });
         }
