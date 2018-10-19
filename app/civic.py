@@ -4,8 +4,7 @@ from app import app
 from bleach.sanitizer import Cleaner
 
 
-ELECTION_URL = "https://www.googleapis.com/civicinfo/v2/elections?key={}".format(  # noqa
-        app.config['GOOGLE_CIVIC_KEY'])
+ELECTION_URL = "https://www.googleapis.com/civicinfo/v2/elections"
 VOTERINFO_URL = "https://www.googleapis.com/civicinfo/v2/voterinfo"
 
 cleaner = Cleaner()  # for use with user address info
@@ -19,13 +18,11 @@ def get_elections():
     return elections
 
 
-def get_voter_info(address, electionId):
-    # import pdb
-    # pdb.set_trace()
+def get_polling_addresses(address, electionId):
+
     raw_data = requests.request('GET', VOTERINFO_URL,
             params={'key': app.config['GOOGLE_CIVIC_KEY'],  # noqa
                     'address': cleaner.clean(address),
-                    'electionId': electionId})
+                    'electionId': str(int(electionId))})
     data = json.loads(raw_data.content.decode('utf-8-sig'))
-    polls = data['pollingLocations']
-    return [p['address'] for p in polls]
+    return data
