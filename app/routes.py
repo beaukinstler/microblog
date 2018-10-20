@@ -10,6 +10,7 @@ from app.email import send_password_reset_email
 from flask import g
 from flask_babel import get_locale
 import app.civic as civic
+import os
 
 
 @app.before_request
@@ -222,7 +223,10 @@ def denied():
     """
     Gather and show data for denied logs
     """
+    elections = civic.get_election_names()
     form = DenialForm()
+
+    form.electionId.choices = elections
     if form.validate_on_submit():
         denial = Denial(
                 optPersonName=form.optPersonName.data,
@@ -237,8 +241,9 @@ def denied():
                 pollState=form.pollState.data,
                 pollName=form.pollName.data,
                 poc=form.poc.data,
-                registration_type=form.registration_type.data)
-        
+                registration_type=form.registration_type.data,
+                electionId=form.electionId.data)
+
         db.session.add(denial)
         db.session.commit()
         flash("Thanks for logging your denail...")
@@ -253,7 +258,8 @@ def denied():
         if denials.has_prev else None
     return render_template('denied.html', title="Log your denial",
                            form=form, denials=denials.items,
-                           next_url=next_url, prev_url=prev_url)
+                           next_url=next_url, prev_url=prev_url,
+                           elections=elections)
 
 
 @app.route('/polling_place', methods=['POST'])
@@ -271,8 +277,9 @@ def get_polling_place():
             optPersonState,
             optPersonZip
         )
-    electionId = civic.get_elections()[0]['id'] if request.form['electionId'] == "" \
-        else request.form['electionId']
-    response_data = jsonify(civic.get_polling_addresses(address, electionId))
 
+    electionId = request.form['electionId']
+    response_data = jsonify(civic.get_polling_addresses(address, electionId))
+    if os.environ['FLASK_DEBUG'] == '1':
+        app.logger.info('response data from civic.get_polling_address: {}'.format(response_data.json))
     return response_data
