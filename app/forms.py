@@ -69,7 +69,7 @@ class ResetPasswordForm(FlaskForm):
 
 
 class DenialForm(FlaskForm):
-    electionId = StringField('electionId')
+    electionId = SelectField('electionId', choices=[])
     optPersonName = StringField('Name')
     optEmail = StringField('Email', validators=[Email()])
     optPersonStreet = StringField('Street')
