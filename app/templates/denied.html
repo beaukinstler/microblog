@@ -40,15 +40,16 @@
                 state: $('#optPersonState').val(),
                 zip: $('#optPersonZip').val(),
                 electionId: $('#electionId').val()
-            }).done(function(response){
-                console.log(response.error.code);
-                if (response.error.code != '400'){
-                    var name = response.pollingLocations[0].address.locationName;
-                    var street = response.pollingLocations[0].address.line1;
-                    var city = response.pollingLocations[0].address.city;
-                    var state = response.pollingLocations[0].address.state;
-                    var zip = response.pollingLocations[0].address.zip;
-
+            }).done(function(response_from_polling){
+                console.log(response_from_polling.json)
+                if ( response_from_polling == undefined){ console.log("No response from /polling_place");}
+                else if (response_from_polling.error == undefined ){
+                    var name = response_from_polling.pollingLocations[0].address.locationName;
+                    var street = response_from_polling.pollingLocations[0].address.line1;
+                    var city = response_from_polling.pollingLocations[0].address.city;
+                    var state = response_from_polling.pollingLocations[0].address.state;
+                    var zip = response_from_polling.pollingLocations[0].address.zip;
+                    
                     $(destElem).html(name +"<br>" + street  +"<br>" + zip);
                     $('#statusIcon').html("");
                     $('#pollName').val(name);
@@ -65,7 +66,7 @@
                     );
                 }
             }).fail(function() {
-                $('.pollingPlaceDetails').removeAttr('hidden');
+                console.log("Failed to call out to Google Civic")
                 $(destElem).text("Server error... Please manually look up polling place details")
             });
         }
