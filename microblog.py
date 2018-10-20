@@ -2,10 +2,11 @@ from app import app, db
 from app.models import User, Post, Denial
 import json
 from app import cli
+import app.civic as civic
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Post': Post, 'Denial': Denial}
+    return {'db': db, 'User': User, 'Post': Post, 'Denial': Denial, 'civic': civic}
 
 
 SUPER_SECRET_KEY_OLD = (
