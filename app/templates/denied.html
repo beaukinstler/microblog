@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-4">
             <div>
-                <input id="clickMe" type="button" value="Look up polling place based on personal address" onclick="getPolls();" />
+                <input id="clickMe" type="button" value="Use address below to look up polling place" onclick="getPolls();" />
             </div>
                 <!-- <a href="javascript:getPolls(
                     
@@ -33,6 +33,13 @@
     {% include '_paginate_denials.html' %}
 
     <script>
+        function fillPollForm(name, street, city, state, zip){
+            $('#pollName').val(name);
+            $('#pollStreet').val(street);
+            $('#pollCity').val(city);
+            $('#pollState').val(state);
+            $('#pollZip').val(zip);
+        }
         function getPolls() {
             var destElem = $('#pollingPlaces');
             $('.pollingPlaceDetails').removeAttr('hidden');
@@ -57,14 +64,11 @@
                     var city = response_from_polling.pollingLocations[0].address.city;
                     var state = response_from_polling.pollingLocations[0].address.state;
                     var zip = response_from_polling.pollingLocations[0].address.zip;
-                    
+                    var params = [name,street,city,state,zip];
+                    param_string = params.map( param => `'${param}'`).join(',');
                     $(destElem).html(name +"<br>" + street  +"<br>" + zip);
+                    $(destElem).append('<br><input id="clickMe" type="button" value="Click here to fill using found polling place info" onclick="fillPollForm('+param_string+');" />')
                     $('#statusIcon').html("");
-                    $('#pollName').val(name);
-                    $('#pollStreet').val(street);
-                    $('#pollCity').val(city);
-                    $('#pollState').val(state);
-                    $('#pollZip').val(zip);
                     $('.pollingPlaceDetails').removeAttr('hidden');
                 }
                 else {
