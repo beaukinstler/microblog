@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField,\
         TextAreaField, RadioField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError,\
-        Length, Regexp
+        Length, Regexp, Optional
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
@@ -71,7 +71,7 @@ class ResetPasswordForm(FlaskForm):
 class DenialForm(FlaskForm):
     electionId = SelectField('electionId', choices=[])
     optPersonName = StringField('Name')
-    optEmail = StringField('Email', validators=[Email()])
+    optEmail = StringField('Email', validators=[Optional(strip_whitespace=True),Email("Please use a valid email address")])
     optPersonStreet = StringField('Street')
     optPersonCity = StringField('City')
     optPersonState = StringField('State')
