@@ -3,8 +3,11 @@
 
 {% block app_content %}
     <h1>{{ title }}</h1>
-    <h2 class="pollingPlaceDetails" hidden >Polling Place Lookup</h2>
-    <span class="pollingPlaceDetails" id="pollingPlaces" hidden></span>
+    <div class="alert" role="alert"></div>
+    <h4 class="pollingPlaceDetails" hidden >Polling Place:</h4>
+    <div class=".col-md-6 pollingPlaceDetails" hidden >Please note: this is an estimation based data from the Voting Information Project, and not guaranteed to be accurate</div>
+    <div class=".col-md-6pollingPlaceDetails" hidden ><a href="https://votinginfoproject.org/">Voting Informatin Project</a></div>
+    <div class="pollingPlaceDetails alert alert-info" id="pollingPlaces" hidden></div>
     <div class="row">
         <div class="col-md-4">
             <div>
@@ -39,11 +42,16 @@
                 city: $('#optPersonCity').val(),
                 state: $('#optPersonState').val(),
                 zip: $('#optPersonZip').val(),
-                electionId: $('#electionId').val()
+                electionId: $('#electionId').val(),
+                post_state: '{{ POST_STATE }}' 
             }).done(function(response_from_polling){
-                console.log(response_from_polling.json)
+                console.log("DEBUG: Done - " + response_from_polling);
+                console.log("DEBUG: Error ");
+                console.log(response_from_polling.error);
+                console.log("DEBUG: full");
+                console.log(response_from_polling);
                 if ( response_from_polling == undefined){ console.log("No response from /polling_place");}
-                else if (response_from_polling.error == undefined ){
+                else if (response_from_polling.error == undefined && response_from_polling.pollingLocations != undefined ){
                     var name = response_from_polling.pollingLocations[0].address.locationName;
                     var street = response_from_polling.pollingLocations[0].address.line1;
                     var city = response_from_polling.pollingLocations[0].address.city;

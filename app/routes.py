@@ -11,7 +11,8 @@ from flask import g
 from flask_babel import get_locale
 import app.civic as civic
 import os
-
+from flask import session as post_session
+from app import utilities as utl
 
 @app.before_request
 def before_request():
@@ -224,6 +225,7 @@ def denied():
     Gather and show data for denied logs
     """
     elections = civic.get_election_names()
+    elections.reverse()
     form = DenialForm()
 
     form.electionId.choices = elections
@@ -248,6 +250,8 @@ def denied():
         db.session.commit()
         flash("Thanks for logging your denail...")
         return redirect(url_for('denied'))
+    post_state = utl.get_state_token()
+    post_session['post_state'] = post_state
     page = request.args.get("page", 1, type=int)
     denials = Denial.query.order_by(Denial.timestamp.desc()).\
         paginate(page, app.config['POSTS_PER_PAGE'], False)
@@ -259,7 +263,7 @@ def denied():
     return render_template('denied.html', title="Log your denial",
                            form=form, denials=denials.items,
                            next_url=next_url, prev_url=prev_url,
-                           elections=elections)
+                           elections=elections, POST_STATE=post_state)
 
 
 @app.route('/polling_place', methods=['POST'])
@@ -267,6 +271,10 @@ def get_polling_place():
     """
     Try to find the polling place based on the personal address
     """
+    response = utl.check_request(request.form['post_state'], post_session['post_state'])
+    import pdb; pdb.set_trace()
+    if response is not None:
+        return response
     optPersonStreet = request.form['street']
     optPersonCity = request.form['city']
     optPersonState = request.form['state']
@@ -279,6 +287,11 @@ def get_polling_place():
         )
 
     electionId = request.form['electionId']
+    if os.environ['FLASK_DEBUG'] == '1':
+        app.logger.info("""Address and electionId being sent to google. 
+                        Address: {}
+                        ElectionId: {}
+                        """.format(address, electionId))
     response_data = jsonify(civic.get_polling_addresses(address, electionId))
     if os.environ['FLASK_DEBUG'] == '1':
         app.logger.info('response data from civic.get_polling_address: {}'.format(response_data.json))
