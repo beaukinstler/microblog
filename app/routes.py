@@ -272,7 +272,6 @@ def get_polling_place():
     Try to find the polling place based on the personal address
     """
     response = utl.check_request(request.form['post_state'], post_session['post_state'])
-    import pdb; pdb.set_trace()
     if response is not None:
         return response
     optPersonStreet = request.form['street']
@@ -287,12 +286,5 @@ def get_polling_place():
         )
 
     electionId = request.form['electionId']
-    if os.environ['FLASK_DEBUG'] == '1':
-        app.logger.info("""Address and electionId being sent to google. 
-                        Address: {}
-                        ElectionId: {}
-                        """.format(address, electionId))
     response_data = jsonify(civic.get_polling_addresses(address, electionId))
-    if os.environ['FLASK_DEBUG'] == '1':
-        app.logger.info('response data from civic.get_polling_address: {}'.format(response_data.json))
     return response_data
