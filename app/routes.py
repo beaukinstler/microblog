@@ -1,7 +1,8 @@
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm,\
-        ResetPasswordRequestForm, ResetPasswordForm, DenialForm
+        ResetPasswordRequestForm, ResetPasswordForm, DenialForm,\
+        PollingPlaceFinder
 from flask_login import current_user, login_user, logout_user, login_required
 # from werkzeug.urls import url_parse
 from app.models import User, Post, Denial
@@ -227,16 +228,17 @@ def denied():
     elections = civic.get_election_names()
     elections.reverse()
     form = DenialForm()
+    form2 = PollingPlaceFinder()
 
     form.electionId.choices = elections
     if form.validate_on_submit():
         denial = Denial(
-                optPersonName=form.optPersonName.data,
-                optEmail=form.optEmail.data,
-                optPersonStreet=form.optPersonStreet.data,
-                optPersonCity=form.optPersonCity.data,
-                optPersonState=form.optPersonState.data,
-                optPersonZip=form.optPersonZip.data,
+                optPersonName=form2.optPersonName.data,
+                optEmail=form2.optEmail.data,
+                optPersonStreet=form2.optPersonStreet.data,
+                optPersonCity=form2.optPersonCity.data,
+                optPersonState=form2.optPersonState.data,
+                optPersonZip=form2.optPersonZip.data,
                 pollZip=form.pollZip.data,
                 pollStreet=form.pollStreet.data,
                 pollCity=form.pollCity.data,
@@ -261,7 +263,7 @@ def denied():
     prev_url = url_for('denied', page=denials.prev_num) \
         if denials.has_prev else None
     return render_template('denied.html', title="Log your denial",
-                           form=form, denials=denials.items,
+                           form=form, form2=form2, denials=denials.items,
                            next_url=next_url, prev_url=prev_url,
                            elections=elections, POST_STATE=post_state)
 

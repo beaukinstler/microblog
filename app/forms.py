@@ -70,12 +70,6 @@ class ResetPasswordForm(FlaskForm):
 
 class DenialForm(FlaskForm):
     electionId = SelectField('electionId', choices=[])
-    optPersonName = StringField('Name')
-    optEmail = StringField('Email', validators=[Optional(strip_whitespace=True),Email("Please use a valid email address")])
-    optPersonStreet = StringField('Street')
-    optPersonCity = StringField('City')
-    optPersonState = StringField('State')
-    optPersonZip = StringField('Zip', validators=[Regexp("^\d{5}(?:[-\s]\d{4})?$", message="Must be a U.S. zip code")])
     pollZip = StringField('Polling Place Zip', validators=[DataRequired()])
     pollStreet = StringField('Polling Place Street', validators=[DataRequired()])
     pollCity = StringField('Polling Place City', validators=[DataRequired()])
@@ -95,8 +89,9 @@ class DenialForm(FlaskForm):
 
 
 class PollingPlaceFinder(FlaskForm):
-    optPersonStreet = StringField('Street')
-    optPersonCity = StringField('City')
-    optPersonState = StringField('State')
-    optPersonZip = StringField('Zip', validators=[Regexp("^\d{5}(?:[-\s]\d{4})?$", message="Must be a U.S. zip code")])
-    submit = SubmitField('Register')
+    optPersonName = StringField('Name',validators=[Optional(strip_whitespace=True)])
+    optEmail = StringField('Email', validators=[Optional(strip_whitespace=True),Email("Please use a valid email address")])
+    optPersonStreet = StringField('Street',validators=[Optional(strip_whitespace=True)])
+    optPersonCity = StringField('City',validators=[Optional(strip_whitespace=True)])
+    optPersonState = StringField('State',validators=[Optional(strip_whitespace=True)])
+    optPersonZip = StringField('Zip', validators=[Optional(strip_whitespace=True), Regexp("^\d{5}(?:[-\s]\d{4})?$", message="Must be a U.S. zip code")])
