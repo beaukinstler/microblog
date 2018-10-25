@@ -69,29 +69,52 @@ class ResetPasswordForm(FlaskForm):
 
 
 class DenialForm(FlaskForm):
-    electionId = SelectField('electionId', choices=[])
-    pollZip = StringField('Polling Place Zip', validators=[DataRequired()])
-    pollStreet = StringField('Polling Place Street', validators=[DataRequired()])
-    pollCity = StringField('Polling Place City', validators=[DataRequired()])
-    pollState = StringField('Polling Place State', validators=[DataRequired()])
+    electionId = SelectField(
+            'Election selection*',
+            choices=[],
+            description="""These options come from the Voter Information Project.  
+                        NOTE: The "VIP..." option is used for testing, 
+                        but sometimes has data that the actual election 
+                        doesn\'t offer
+                        """)
+    pollZip = StringField('Polling Place Zip*', validators=[DataRequired()])
+    pollStreet = StringField('Polling Place Street*', validators=[DataRequired()])
+    pollCity = StringField('Polling Place City*', validators=[DataRequired()])
+    pollState = StringField('Polling Place State*', validators=[DataRequired()])
     pollName = StringField('Polling Place Name')
     poc = BooleanField('You identify as a person of color')
-    registration_type = SelectField('What party are you registered for?',
+    registration_type = SelectField(
+            'What party are you registered for?',
             choices=[
-                ('N','None'),
-                ('D','Democrat'),
-                ('R','Republican'),
-                ('I','Independent'),
-                ('G','Green'),
-                ('K','Don\'t know'),
-                ('O','Other')])
+                ('N', 'None'),
+                ('D', 'Democrat'),
+                ('R', 'Republican'),
+                ('I', 'Independent'),
+                ('G', 'Green'),
+                ('K', 'Don\'t know'),
+                ('O', 'Other')])
     submit = SubmitField('Submit your log')
 
 
 class PollingPlaceFinder(FlaskForm):
-    optPersonName = StringField('Name',validators=[Optional(strip_whitespace=True)])
-    optEmail = StringField('Email', validators=[Optional(strip_whitespace=True),Email("Please use a valid email address")])
-    optPersonStreet = StringField('Street',validators=[Optional(strip_whitespace=True)])
-    optPersonCity = StringField('City',validators=[Optional(strip_whitespace=True)])
-    optPersonState = StringField('State',validators=[Optional(strip_whitespace=True)])
-    optPersonZip = StringField('Zip', validators=[Optional(strip_whitespace=True), Regexp("^\d{5}(?:[-\s]\d{4})?$", message="Must be a U.S. zip code")])
+    optPersonName = StringField('Name (optional)',
+                                validators=[Optional(strip_whitespace=True)])
+    optEmail = StringField('Email (optional)',
+                           validators=[
+                                Optional(strip_whitespace=True),
+                                Email("Please use a valid email address")
+                            ])
+    optPersonStreet = StringField(
+            'Street (optional, but required for poll finder to work)',
+            validators=[Optional(strip_whitespace=True)])
+    optPersonCity = StringField(
+            'City (optional)', validators=[Optional(strip_whitespace=True)])
+    optPersonState = StringField(
+            'State (optional)', validators=[Optional(strip_whitespace=True)])
+    optPersonZip = StringField(
+            'Zip (optional, but required for poll finder to work)',
+            validators=[
+                    Optional(strip_whitespace=True),
+                    Regexp("^\d{5}(?:[-\s]\d{4})?$",
+                           message="Must be a U.S. zip code")
+            ])
