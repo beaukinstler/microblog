@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h1>{{ title }}</h1>
+    <div class="alert" role="alert"></div>
+
+    <h2>Denials Logged:</h2>
+    {% for denial in denials %}
+    <div class="row">{{ denial }} </div>
+    {% endfor %}
+    {% include '_paginate_denials.html' %}
+
+    
+{% endblock %}

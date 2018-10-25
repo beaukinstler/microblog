@@ -4,35 +4,25 @@
 {% block app_content %}
     <h1>{{ title }}</h1>
     <div class="alert" role="alert"></div>
-    <h4 class="pollingPlaceDetails" hidden >Polling Place:</h4>
-    <div class=".col-md-6 pollingPlaceDetails" hidden >Please note: this is an estimation based data from the Voting Information Project, and not guaranteed to be accurate</div>
-    <div class=".col-md-6pollingPlaceDetails" hidden ><a href="https://votinginfoproject.org/">Voting Informatin Project</a></div>
-    <div class="pollingPlaceDetails alert alert-info" id="pollingPlaces" hidden></div>
+
     <div class="row">
         <div class="col-md-4">
-            <div>
-                <input id="clickMe" type="button" value="Use address below to look up polling place" onclick="getPolls();" />
-            </div>
-                <!-- <a href="javascript:getPolls(
-                    
-                    '#optPersonStreet',
-                    '#optPersonCity',
-                    '#optPersonState',
-                    '#optPersonZip',
-                    '#electionId');">Look up polling place based on personal address</a> -->
-                    <div id="statusIcon" ></div>
             {{ wtf.quick_form(form2) }}
+            <div>
+                <input id="clickMe" type="button" value="Use address above to look up polling place" onclick="getPolls();" />
+            </div>
+            <div id="statusIcon" ></div>
+            <h4 class="pollingPlaceDetails" hidden >Polling Place:</h4>
+            <div class=".col-md-6 pollingPlaceDetails" hidden >Please note: this is an estimation based data from the Voting Information Project, and not guaranteed to be accurate</div>
+            <div class=".col-md-6pollingPlaceDetails" hidden ><a href="https://votinginfoproject.org/">Voting Information Project</a></div>
+            <div class="pollingPlaceDetails alert alert-info" id="pollingPlaces" hidden></div>
+            <h4>Poll location - These details will be logged</h4>
+            <div class="col-md-12">(*Required)</div>
+
             {{ wtf.quick_form(form) }}
+            
         </div>
     </div>
-
-
-    <h2>Denials Logged:</h2>
-    {% for denial in denials %}
-    <div class="row">{{ denial }} </div>
-    {% endfor %}
-    {% include '_paginate_denials.html' %}
-
     <script>
         function fillPollForm(name, street, city, state, zip){
             $('#pollName').val(name);
@@ -75,7 +65,7 @@
                 else {
                     $(destElem).html(
                         "***That address isn't available in the public records**** <br>"
-                        + "Please manually enter the polling location info as bast as you can.<br>"
+                        + "Please manually enter the polling location info below as best as you can.<br>"
                     );
                 }
             }).fail(function() {

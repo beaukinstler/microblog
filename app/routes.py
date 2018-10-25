@@ -251,7 +251,7 @@ def denied():
         db.session.add(denial)
         db.session.commit()
         flash("Thanks for logging your denail...")
-        return redirect(url_for('denied'))
+        return redirect(url_for('logged_denials'))
     post_state = utl.get_state_token()
     post_session['post_state'] = post_state
     page = request.args.get("page", 1, type=int)
@@ -290,3 +290,21 @@ def get_polling_place():
     electionId = request.form['electionId']
     response_data = jsonify(civic.get_polling_addresses(address, electionId))
     return response_data
+
+
+@app.route('/logged_denials', methods=['GET'])
+def logged_denials():
+    page = request.args.get("page", 1, type=int)
+    denials = Denial.query.order_by(Denial.timestamp.desc()).\
+        paginate(page, app.config['POSTS_PER_PAGE'], False)
+    #  Pagination links
+    next_url = url_for('logged_denials', page=denials.next_num) \
+        if denials.has_next else None
+    prev_url = url_for('logged_denials', page=denials.prev_num) \
+        if denials.has_prev else None
+    return render_template(
+            'logged_denials.html',
+            title="List of logged denials",
+            denials=denials.items,
+            next_url=next_url, prev_url=prev_url,
+        )
