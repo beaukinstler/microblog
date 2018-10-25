@@ -15,3 +15,4 @@ app/translations/es/LC_MESSAGES/messages.mo
 .directory
 app/static/favicon.png
 app/static/favicon.png
+setup_env.sh
