@@ -166,7 +166,7 @@ class Denial(db.Model):
         self.electionId = electionId
 
     def get_polling_place(self):
-        if not self.elelectionId:
+        if not self.electionId:
             self.electionId = civic.get_elections()[0]
         address = "{},{},{} {},".format(
                 self.optPersonStreet,
@@ -174,7 +174,7 @@ class Denial(db.Model):
                 self.optPersonState,
                 self.optPersonZip
         )
-        return civic.get_voter_info(address, self.electionId)
+        return civic.get_polling_addresses(address, self.electionId)
 
     def __repr__(self):
         return '<Denial {}, {}>'.format((self.pollStreet + " - " +self.pollZip), self.timestamp)
