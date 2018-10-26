@@ -73,7 +73,7 @@ class DenialForm(FlaskForm):
             'Election selection*',
             choices=[],
             description="""These options come from the Voter Information Project.  
-                        NOTE: The "VIP..." option is used for testing, 
+                        NOTE: The "VIP Test Election" option is used for testing, 
                         but sometimes has data that the actual election 
                         doesn\'t offer
                         """)
