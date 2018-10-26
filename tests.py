@@ -160,29 +160,42 @@ class DenialModelCase(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_denial_logged(self):
-        d = Denial(optPersonName = "Test",
-                    optPersonStreet = "1503 Almond Ave",
-                    optPersonCity = "Saint Paul",
-                    optPersonState = "MN",
-                    optPersonZip = "11215",
-                    optEmail = "Test@example.com",
-
-                    pollZip = "Test",
-                    pollStreet = "Test",
-                    pollCity = "Test",
-                    pollState = "Test",
-                    pollName = "Test",
-
-                    poc = True,
-                    registration_type = "O",
-                    elelectionId = 6000)
+    def test_polling_locations(self):
+        d = Denial(
+                optPersonName="Test",
+                optPersonStreet="1503 Almond Ave",
+                optPersonCity="Saint Paul",
+                optPersonState="MN",
+                optPersonZip="11215",
+                optEmail="Test@example.com",
+                pollZip="Test",
+                pollStreet="Test",
+                pollCity="Test",
+                pollState="Test",
+                pollName="Test",
+                poc=True,
+                registration_type="O",
+                electionId=6000)
 
         polling_place = d.get_polling_place()
         db.session.add(d)
         db.session.commit()
 
-    def test_polling_place(self):
+        # ensure record added
+        self.assertEqual(d.id, 1)
+        self.assertNotEqual(d.id, 2)
+
+        try:
+            if len(app.config['GOOGLE_CIVIC_KEY']) > 30:  # seems to be able to call the API  # noqa
+                self.assertEqual(
+                        polling_place['pollingLocations'][0]['address']['zip'],
+                        "55108",
+                        msg="Test Zip Found Success"
+                    )
+        except KeyError as e:
+            pass
+
+    # def test_polling_place(self):
 
 
 if __name__ == '__main__':
