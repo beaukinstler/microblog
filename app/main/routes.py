@@ -108,6 +108,19 @@ def user(username):
                            next_url=next_url, prev_url=prev_url)
 
 
+@bp.route('/users')
+# @bp.route('/users/')
+@login_required
+def users():
+    if current_user.is_authenticated:
+        users = db.session.query(User).filter(
+                User.username != current_user.username).limit(50)
+        return render_template('users.html', users=users)
+    else:
+        flash("Please log in")
+        return redirect(url_for('auth.login'))
+
+
 @bp.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():

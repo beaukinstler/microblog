@@ -10,9 +10,9 @@
                     <h4>User: {{ user.username }}</h4>
                     {% if user != current_user %}
                         {% if current_user.is_following(user) %}
-                            <p><a href="{{ url_for('unfollow', username=user.username ) }}">unfollow</a></p>
+                            <p><a href="{{ url_for('main.unfollow', username=user.username ) }}">unfollow</a></p>
                         {% else %}
-                            <p><a href="{{ url_for('follow', username=user.username ) }}">follow</a></p>
+                            <p><a href="{{ url_for('main.follow', username=user.username ) }}">follow</a></p>
                         {% endif %}
                     {% endif %}
                     {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
