@@ -1,13 +1,22 @@
+#!/usr/bin/env python
 from datetime import datetime, timedelta
 import unittest
 from app import create_app, db
 from app.models import User, Post
 from config import Config
+import os
+from dotenv import load_dotenv
+
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
 
 
 class TestConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
+        ('sqlite:///' + os.path.join(basedir, 'test_app.db')) or \
+        'sqlite://'
 
 
 class UserModelCase(unittest.TestCase):
@@ -16,10 +25,6 @@ class UserModelCase(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
-    # def setUp(self):
-    #     # change the SQL db to an in-memory version
-    #     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
-    #     db.create_all()  # quick create the tables
 
     def tearDown(self):
         db.session.remove()
