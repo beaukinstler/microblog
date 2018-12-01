@@ -12,8 +12,10 @@ secrets.*
 secrets/
 node_modules/
 logs/
-logs/
+
 app/translations/es/LC_MESSAGES/messages.mo
 .directory
 setup_env.sh
 .env
+test_app.db
+
