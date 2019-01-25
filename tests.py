@@ -47,6 +47,8 @@ class UserModelCase(unittest.TestCase):
     def test_follow(self):
         u1 = User(username='john', email='john@example.com')
         u2 = User(username='susan', email='susan@example.com')
+        u1.set_password('cat')
+        u2.set_password('cat')
         db.session.add(u1)
         db.session.add(u2)
         db.session.commit()
@@ -66,6 +68,17 @@ class UserModelCase(unittest.TestCase):
         self.assertFalse(u1.is_following(u2))
         self.assertEqual(u1.followed.count(), 0)
         self.assertEqual(u2.followers.count(), 0)
+
+    def test_encryption_not_simple(self):
+        u1 = User(username='john2', email='john2@example.com')
+        u2 = User(username='susan2', email='susan2@example.com')
+        u1.set_password('cat')
+        u2.set_password('cat')
+        db.session.add(u1)
+        db.session.add(u2)
+        db.session.commit()
+        self.assertNotEqual(u1.password_hash, u2.password_hash)
+
 
     def test_add_favorite(self):
         u1 = User(username='john', email='john@example.com')
@@ -166,9 +179,11 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(f3, [p4])
         self.assertEqual(f4, [])
 
-    # def test_errors():
-    #     from urllib import request as r
-    #     test = r
+    def test_errors(self):
+        """not impelmented, expected to fail
+        """
+
+        self.assertEqual('400', '401')
 
 
 if __name__ == '__main__':

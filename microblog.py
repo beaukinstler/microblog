@@ -1,6 +1,5 @@
 from app import create_app, db, cli
 from app.models import User, Post
-import json
 
 app = create_app()
 cli.register(app)
@@ -14,4 +13,4 @@ def make_shell_context():
 if __name__ == '__main__':
     app.secret_key = app.config['SUPER_SECRET_KEY']
     app.debug = True
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=5001)
