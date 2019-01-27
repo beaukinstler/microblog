@@ -12,8 +12,6 @@ class Config(object):
                 from the secrets file.
                 Preference is given the the 'secrets/secrets.json' file.
     """
-
-
     # the other keys default to the json file.  This secret goes back to
     # to defering to the OS Environment instead.  Add similar logic to
     # do the same for other keys

@@ -1,4 +1,4 @@
-from flask import request
+# from flask import request
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Length
@@ -26,4 +26,3 @@ class EditProfileForm(FlaskForm):
 class PostForm(FlaskForm):
     post_body = TextAreaField(_l('Say something'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
-
