@@ -79,7 +79,6 @@ class UserModelCase(unittest.TestCase):
         db.session.commit()
         self.assertNotEqual(u1.password_hash, u2.password_hash)
 
-
     def test_add_favorite(self):
         u1 = User(username='john', email='john@example.com')
         u2 = User(username='susan', email='susan@example.com')
