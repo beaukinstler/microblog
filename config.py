@@ -41,6 +41,7 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
+    MS_TRANSLATE_KEY = os.environ.get('MS_TRANSLATE_KEY')
 
     #  Pagination
     POSTS_PER_PAGE = 25
