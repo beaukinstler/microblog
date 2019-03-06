@@ -60,6 +60,7 @@ def create_app(config_class=Config):
 @babel.localeselector
 def get_locale():
     # return 'es'  # just for testing Spanish
+    # return 'de' # just for testing German
     return request.accept_languages.best_match(current_app.config['LANGUAGES'])
 
 

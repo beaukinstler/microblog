@@ -46,7 +46,7 @@ class Config(object):
     #  Pagination
     POSTS_PER_PAGE = 25
 
-    LANGUAGES = ['en', 'es']
+    LANGUAGES = ['en', 'de', 'es']
 
     # Elasticsearch
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')

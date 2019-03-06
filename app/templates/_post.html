@@ -14,11 +14,14 @@
             <span id="post{{ post.id }}">{{ post.body }}</span>
             <br>
             <span id="translation{{ post.id }}">
+            {% if post.language and post.language != g.locale %}
+                <br><br>
                     <a href="javascript:translate(
                                 '#post{{ post.id }}',
                                 '#translation{{ post.id }}',
                                 '{{ post.language }}',
                                 '{{ g.locale }}');">{{ _('Translate') }}</a>
+            {% endif %}
                 </span>
         </td>
     </tr>
