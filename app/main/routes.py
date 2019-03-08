@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from guess_language import guess_language
 from app import db
-from app.main.forms import EditProfileForm, PostForm
+from app.main.forms import EditProfileForm, PostForm, SearchForm
 from app.models import User, Post
 from app.translate import translate
 from app.main import bp
@@ -13,9 +13,12 @@ from app.main import bp
 
 @bp.before_app_request
 def before_request():
+    # only for actions that require used to be authenticated
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+        g.search_form = SearchForm()
+    # Put things that don't need authentication first here
     g.locale = str(get_locale())
 
 
@@ -23,20 +26,20 @@ def before_request():
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    form = PostForm()
+    home_page_new_post_form = PostForm()
     page = request.args.get("page", 1, type=int)
-    posts = current_user.followed_posts().\
+    user_and_followed_posts = current_user.followed_posts().\
         paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     #  Pagination links
-    next_url = url_for('main.index', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('main.index', page=posts.prev_num) \
-        if posts.has_prev else None
-    if form.validate_on_submit():
-        language = guess_language(form.post_body.data)
+    next_url = url_for('main.index', page=user_and_followed_posts.next_num) \
+        if user_and_followed_posts.has_next else None
+    prev_url = url_for('main.index', page=user_and_followed_posts.prev_num) \
+        if user_and_followed_posts.has_prev else None
+    if home_page_new_post_form.validate_on_submit():
+        language = guess_language(home_page_new_post_form.post_body.data)
         if language == 'UNKNOWN' or len(language) > 5:
             language = ''
-        post = Post(body=form.post_body.data,
+        post = Post(body=home_page_new_post_form.post_body.data,
                     author=current_user,
                     language=language)
         db.session.add(post)
@@ -45,7 +48,8 @@ def index():
         return redirect(url_for('main.index'))
     else:
         return render_template('index.html', title='Home',
-                               form=form, posts=posts.items,
+                               form=home_page_new_post_form,
+                               posts=user_and_followed_posts.items,
                                next_url=next_url, prev_url=prev_url)
 
 
@@ -148,3 +152,18 @@ def translate_text():
                                       request.form['source_language'],
                                       request.form['dest_language'])})
 
+
+@bp.route('/search')
+@login_required
+def search():
+    if not g.search_form.validate():
+        return redirect(url_for('main.explore'))
+    page = request.args.get('page', 1, type=int)
+    posts, total = Post.search(g.search_form.q.data, page,
+                               current_app.config['POSTS_PER_PAGE'])
+    next_url = url_for('main.search', q=g.search_form.q.data, page=page + 1) \
+        if total > page * current_app.config['POSTS_PER_PAGE'] else None
+    prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) \
+        if page > 1 else None
+    return render_template('search.html', title=_('Search'), posts=posts,
+                           next_url=next_url, prev_url=prev_url)
