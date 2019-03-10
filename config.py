@@ -50,3 +50,6 @@ class Config(object):
 
     # Elasticsearch
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
+
+    # Set a env var to use STDOUT logging for heroku
+    LOG_STD_OUT = os.environ.get('LOG_STD_OUT')

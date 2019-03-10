@@ -1,6 +1,7 @@
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
+import sys
 from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -82,9 +83,12 @@ def create_app(config_class=Config):
             '[in %(pathname)s:%(lineno)d]'))
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
-
-        app.logger.setLevel(logging.INFO)
+        if app.config['LOG_STD_OUT'] == 1:
+            _std_handler = logging.StreamHandler(sys.stdout)
+            app.logger.addHandler(_std_handler)
+        app.logger.setLevel(logging.DEBUG)
         app.logger.info(f'{app_name} startup')
+        app.logger.info(f"Config for STDOUT:{app.config['LOG_STD_OUT']}")
 
     return app
 
