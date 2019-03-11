@@ -73,22 +73,23 @@ def create_app(config_class=Config):
                 credentials=auth, secure=secure)
             mail_handler.setLevel(logging.ERROR)
             app.logger.addHandler(mail_handler)
-
-        if not os.path.exists('logs'):
-            os.mkdir('logs')
-        file_handler = RotatingFileHandler(f'logs/{app_name}.log',
-                                           maxBytes=10240, backupCount=10)
-        file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s '
-            '[in %(pathname)s:%(lineno)d]'))
-        file_handler.setLevel(logging.INFO)
-        app.logger.addHandler(file_handler)
-        if app.config['LOG_STD_OUT'] == 1:
-            _std_handler = logging.StreamHandler(sys.stdout)
+        
+        # If STD out env variable set, log to stout instead of files
+        if app.config['LOG_STD_OUT']:
+            _std_handler = logging.StreamHandler()
             app.logger.addHandler(_std_handler)
-        app.logger.setLevel(logging.DEBUG)
+            app.logger.setLevel(logging.INFO)
+        else:
+            if not os.path.exists('logs'):
+                os.mkdir('logs')
+            file_handler = RotatingFileHandler(f'logs/{app_name}.log',
+                    maxBytes=10240, backupCount=10)
+            file_handler.setFormatter(logging.Formatter(
+                '%(asctime)s %(levelname)s: %(message)s '
+                '[in %(pathname)s:%(lineno)d]'))
+            file_handler.setLevel(logging.INFO)
+            app.logger.addHandler(file_handler)
         app.logger.info(f'{app_name} startup')
-        app.logger.info(f"Config for STDOUT:{app.config['LOG_STD_OUT']}")
 
     return app
 
